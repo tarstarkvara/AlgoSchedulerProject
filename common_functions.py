@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from collections import defaultdict
+from random import shuffle
 
 
 def readlessondata(filename):
@@ -109,13 +110,15 @@ def evaluate_result(schedule, optimal_lessons):
     return score
 
 def greedy(lessondata,max_days,max_hours, max_per_day):
+    random_lesson_keys = list(lessondata.keys())
+    shuffle(random_lesson_keys)
     lessonplan = {}
     for i in range(max_days):
         lessonplan['day' + str(i)] = {}
         max_lessons = []
         for j in range(max_hours):
             lessonplan['day' + str(i)][j] = []
-            for k in lessondata:
+            for k in random_lesson_keys:
                 if int(lessondata[k][3]) > 0:
                     toadd = [lessondata[k][0],lessondata[k][1],lessondata[k][2]]
                     addable = True
@@ -142,7 +145,7 @@ def greedy(lessondata,max_days,max_hours, max_per_day):
                             lessondata[k][3] = str(int(lessondata[k][3]) - 1)
     for i in range(max_days):
         for j in range(max_hours):
-            for k in lessondata:
+            for k in random_lesson_keys:
                 if int(lessondata[k][3]) > 0:
                     toadd = [lessondata[k][0],lessondata[k][1],lessondata[k][2]]
                     addable = True
@@ -168,11 +171,25 @@ def greedy(lessondata,max_days,max_hours, max_per_day):
         if int(lessondata[i][3]) > 0:
             #print(lessondata[i])
             test_result.append(lessondata[i])
-    return (lessonplan,test_result)
+    return (lessonplan, test_result)
 
 
 
 #print(readlessondata('Algo_Project_data.txt'))
 #print(evaluate_result(test_dict,5))
 #print(evaluate_result(test_dict2,5))
-print(evaluate_result(reference,5))
+print(evaluate_result(reference, 5))
+bilbo = []
+for i in range(5):
+    a, ta = greedy(readlessondata("Algo_Project_data_changed.txt"), 5, 5, 6)
+    bilbo.append(a)
+    if len(ta) > 0:
+        print(i)
+
+for i in range(len(bilbo)):
+    for j in range(i, len(bilbo)):
+        if bilbo[i] == bilbo[j] and i != j:
+            print(i, j)
+
+
+
