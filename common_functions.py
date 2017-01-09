@@ -108,8 +108,7 @@ def evaluate_result(schedule, optimal_lessons):
                 score += 5*(max(lessons)-5)
     return score
 
-def greedy_simple(lessondata,max_days,max_hours, max_per_day):
-    ##lisa kontroll selle kohta, et kas tund on selles päevas juba olnud max_arv_kordi
+def greedy(lessondata,max_days,max_hours, max_per_day):
     lessonplan = {}
     for i in range(max_days):
         lessonplan['day' + str(i)] = {}
@@ -122,8 +121,20 @@ def greedy_simple(lessondata,max_days,max_hours, max_per_day):
                     addable = True
                     if not [lessondata[k][0],lessondata[k][1]] in max_lessons:
                         for l in lessonplan['day' + str(i)][j]:
-                            if lessondata[k][0] in l or (lessondata[k][1] and lessondata[k][2]) in l:
-                                addable = False
+                            #print(l)
+                            for a in lessondata[k][0].split(','):
+                                #print(a)
+                                if a in l[0]:
+                                    addable = False
+                                    #print('did not fit')
+                                    break
+                            if addable == False:
+                                break
+                            for a in lessondata[k][2].strip('()').split(','):
+                                if a in l[2]:
+                                    addable = False
+                                    break
+                            if not addable:
                                 break
                         if addable:
                             lessonplan['day' + str(i)][j].append(toadd)
@@ -136,8 +147,18 @@ def greedy_simple(lessondata,max_days,max_hours, max_per_day):
                     toadd = [lessondata[k][0],lessondata[k][1],lessondata[k][2]]
                     addable = True
                     for l in lessonplan['day' + str(i)][j]:
-                        if lessondata[k][0] in l or (lessondata[k][1] and lessondata[k][2]) in l:
-                            addable = False
+                        for a in lessondata[k][0].split(','):
+                            #print(a)
+                            if a in l[0]:
+                                addable = False
+                                break
+                        if not addable:
+                            break
+                        for a in lessondata[k][2].strip('()').split(','):
+                            if a in l[2]:
+                                addable = False
+                                break
+                        if not addable:
                             break
                     if addable:
                         lessonplan['day' + str(i)][j].append(toadd)
@@ -148,6 +169,8 @@ def greedy_simple(lessondata,max_days,max_hours, max_per_day):
             #print(lessondata[i])
             test_result.append(lessondata[i])
     return (lessonplan,test_result)
+
+
 
 #print(readlessondata('Algo_Project_data.txt'))
 #print(evaluate_result(test_dict,5))
