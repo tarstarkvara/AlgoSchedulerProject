@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 from collections import defaultdict
 from random import shuffle
-
+from math import exp
+import random
 
 def readlessondata(filename):
     lessondata = defaultdict(list)
@@ -39,27 +40,27 @@ test_dict2 = {'päev1': {'1': [['10a','matemaatika', 'opetaja1'],['10b','matemaa
                        '6': [['10c', 'matemaatika', 'opetaja1'], ['10b', 'fyysika', 'fys1']]}
              }
 
-reference = {'päev1': {'1': [['10a','fyysika', 'oks'], ['10b','matemaatika','timak'], ['10c', 'bioloogia','kaarna'],['10d', 'geograafia','seevri'], ['10e', 'kunst', 'beier'], ['11a','matemaatika','hüva'],['11b','B_keel_vene_pr_saksa', '(Matto,Roots,L_Titova,O_Titova)'],['11c','B_keel_vene_pr_saksa,A_keel_inglise', '(Matto,Roots,O_Titova);Hunt'],['11d','B_keel_vene_pr_saksa','(Matto,Roots,L_Titova,O_Titova)'],['11e','matemaatika','orav'],['12a','kirjandus','pluum'],['12b','fyysika','reemann'],['12c','keemia','paabo'],['12d','fyysika','paaver'],['12e','ajalugu','punga']],
-                       '2': [['10a','geograafia', 'seevri'],['10b', 'B_keel_vene_pr_saksa,A_keel_inglise', '(O_Titova,Niitvägi,Matto);roostoja'], ['10c', 'B_keel_vene_pr_saksa,A_keel_inglise', '(O_Titova,Niitvägi,Matto);ojaveer'], ['10d','B_keel_vene_pr_saksa,A_keel_inglise', '(L_Titova,Niitvägi,Matto);rootsi'], ['10e', 'kirjandus', 'pluum'], ['11a','fyysika','reemann'],['11b','matemaatika','hüva'],['11c','matemaatika','timak'],['11d','kunst','beier'],['11e','muusika','keerberg'],['12a','fyysika','oks'],['12b','bioloogia','kaarna'],['12c','ajalugu','punga'],['12d','matemaatika','orav'],['12e','fyysika','paaver']],
-                       '3': [['10a','mat_fys_pr', 'timak,reemann'],['10b', 'informaatika,B_keel_vene_pr_saksa', 'mägi;L_Titova'], ['10c', 'muusika', 'keerberg'], ['10d', 'C_keel_prantsuse_saksa', 'Niitvägi,Matto'], ['10e', 'geograafia', 'seevri'], ['11a','A_keel_inglise', '(Hunt,Köhler,Ojaveer,Roostoja)'],['11b','keemia','paabo'],['11c','kirjandus','pluum'],['11d','bioloogia','kaarna'],['11e','A_keel_inglise', '(Hunt,Köhler,Ojaveer,Roostoja)'],['12a','matemaatika','hüva'],['12b','ajalugu','punga'],['12c','filosoofia','pettai'],['12d','usundiõpetus','schihalejev'],['12e','matemaatika','orav']],
-					   '4': [['10a','mat_fys_pr', 'timak,reemann'],['10b', 'informaatika,A_keel_inglise', 'mägi;(köhler,hildebrandt,hunt)'], ['10c', 'B_keel_vene_pr_saksa,A_keel_inglise', 'L_Titova;(köhler,hildebrandt,hunt)'], ['10d', 'B_keel_vene_pr_saksa,A_keel_inglise', 'O_Titova;(köhler,hildebrandt,hunt)'], ['10e', 'inimeseõpetus', 'saar'], ['11a','keemia','paabo'],['11b','ajalugu','pettai'],['11c','bioloogia','ustav'],['11d','muusika','keerberg'],['11e','fyysika','paaver'],['12a','matemaatika','hüva'],['12c','matemaatika','orav'],['12d','bioloogia','kaarna'],['12e','usundiõpetus','schihalejev']]},
-             'päev2': {'1': [['10a','muusika', 'keerberg'], ['10b', 'geograafia', 'seevri'], ['10c', 'keemia', 'paabo'], ['10d', 'matemaatika','kiisel'], ['10e', 'kunst', 'beier'], ['11a','matemaatika','hüva'],['11b','ajalugu','pettai'],['11c','kehaline','saarva,poom'],['11d','bioloogia','kaarna'],['11e','kirjandus','soodla'],['12a','kirjandus','pluum'],['12b','fyysika','reemann'],['12c','fyysika','oks'],['12d','ühiskonnaõpetus','ristikivi'],['12e','filosoofia','paaver']],
-                       '2': [['10a','geograafia', 'seevri'],['10b', 'B_keel_vene_pr_saksa,A_keel_inglise', '(O_Titova,Niitvägi,Matto);roostoja'], ['10c',  'B_keel_vene_pr_saksa,A_keel_inglise', '(O_Titova,Niitvägi,Matto);ojaveer'], ['10d', 'B_keel_vene_pr_saksa,A_keel_inglise', '(L_Titova,Niitvägi,Matto);rootsi'], ['10e', 'matemaatika', 'kiisel'], ['11a','kirjandus','soodla'],['11b','mat_fys_pr','reemann,hüva'],['11c','ajalugu','pettai'],['11d','kunst','beier'],['11e','fyysika','paaver'],['12a','ühiskonnaõpetus','ristikivi'],['12b','kirjandus','piirimäe'],['12c','keemia','paabo'],['12d','bioloogia','kaarna'],['12e','kirjandus','pluum']],
-                       '3': [['10a','fyysika', 'oks'], ['10b', 'kehaline', 'saarva,poom'], ['10c', 'kirjandus', 'lummo,tepp'], ['10d', 'eesti keel', 'piirimäe'], ['10e', 'ajalugu', 'pettai'], ['11a','fyysika','reemann'],['11b','A_keel_inglise', '(Hildebrandt,Ojaveer,Roostoja),Rootsi'],['11c','B_keel_vene_pr_saksa,A_keel_inglise', '(Hildebrandt,Ojaveer,Roostoja);L_Titova'],['11d','A_keel_inglise', '(Hildebrandt,Ojaveer,Roostoja),Köhler'],['11e','B_keel_vene,informaatika', 'O_Titova;Mägi'],['12a','matemaatika', 'hüva'],['12b','matemaatika','kiisel'],['12c','kirjandus','soodla'],['12d','fyysika','paaver'],['12e','muusika','keerberg']],
-					   '4': [['10a','kirjandus', 'lummo,tepp'], ['10b', 'informaatika,A_keel_inglise', 'mägi;(köhler,hildebrandt,hunt)'], ['10c', 'B_keel_vene_pr_saksa,A_keel_inglise', 'L_Titova;(köhler,hildebrandt,hunt)'], ['10d', 'B_keel_vene_pr_saksa,A_keel_inglise', 'O_Titova;(köhler,hildebrandt,hunt)'], ['10e', 'geograafia', 'seevri'], ['11a','keemia','paabo'],['11b','mat_fys_pr','reemann,hüva'],['11c','bioloogia','ustav'],['11d','muusika','keerberg'],['11e','bioloogia','kaarna'],['12a','ajalugu','punga'],['12b','mat_fys_pr','kiisel,oks'],['12c','filosoofia','pettai'],['12d','kehaline','saarva,poom'],['12e','fyysika','paaver']],
-					   '5': [['10a','kehaline', 'saarva,poom'], ['10b', 'kirjandus', 'piirimäe'], ['10c', 'muusika', 'keerberg'], ['10d', 'geograafia', 'seevri'], ['10e', 'inimeseõpetus', 'saar'], ['11a','A_keel_inglise', '(Hunt,Köhler,Ojaveer,Roostoja)'],['11b','keemia','paabo'],['11d','kirjandus','mandri,tepp'],['11e','A_keel_inglise', '(Hunt,Köhler,Ojaveer,Roostoja)'],['12a','mat_fys_pr', 'oks,hüva'],['12d','kirjandus','soodla'],['12e','ajalugu','punga']]},
-			 'päev3': {'1': [['10a','fyysika', 'oks'],['10b',  'B_keel_vene_pr_saksa,A_keel_inglise', '(O_Titova,Niitvägi,Matto);roostoja'], ['10c', 'B_keel_vene_pr_saksa,A_keel_inglise', '(O_Titova,Niitvägi,Matto);ojaveer'], ['10d','B_keel_vene_pr_saksa,A_keel_inglise', '(L_Titova,Niitvägi,Matto);rootsi'], ['10e', 'kirjandus','pluum'], ['11a','kehaline', 'saarva,poom'],['11b','keemia','paabo'],['11c','matemaatika','timak'],['11d','kirjandus','mandri,tepp'],['11e','kirjandus','soodla'],['12a','ajalugu','punga'],['12b','matemaatika','kiisel'],['12c','matemaatika','orav'],['12d','usundiõpetus','schihalejev'],['12e','fyysika','paaver']],
-                       '2': [['10a','A_keel_inglise', 'köhler,(hildebrandt,hunt,ojaveer)'], ['10b', 'kirjandus', 'piirimäe'], ['10c', 'keemia', 'paabo'], ['10d', 'C_keel_prantsuse_saksa', 'Niitvägi,Matto'],['10e', 'A_keel_inglise', 'köhler,(hildebrandt,hunt,ojaveer)'], ['11a','kirjandus', 'soodla'],['11b','kirjandus','mandri,tepp'],['11c','kirjandus','pluum'],['11d','matemaatika','timak'],['11e','matemaatika','orav'],['12a','fyysika', 'oks'],['12b','kehaline','saarva,poom'],['12c','ajalugu','punga'],['12d','fyysika','paaver'],['12e','usundiõpetus','schihalejev']],
-                       '3': [['10a','kirjandus', 'lummo,tepp'], ['10b','matemaatika','timak'], ['10c', 'matemaatika','kiisel'], ['10d', 'eesti keel', 'piirimäe'], ['10e', 'geograafia', 'seevri'], ['11a','keemia', 'paabo'],['11b','A_keel_inglise', '(Hildebrandt,Ojaveer,Roostoja),Rootsi'],['11c','B_keel_vene_pr_saksa,A_keel_inglise', '(Hildebrandt,Ojaveer,Roostoja);L_Titova'],['11d','A_keel_inglise', '(Hildebrandt,Ojaveer,Roostoja),Köhler'],['11e','B_keel_vene,informaatika', 'O_Titova;Mägi'],['12a','ühiskonnaõpetus', 'ristikivi'],['12b','ajalugu','punga'],['12c','fyysika','oks'],['12d','filosoofia','paaver'],['12e','kirjandus','pluum']],
-					   '4': [['10a','matemaatika', 'timak'], ['10b', 'geograafia', 'seevri'], ['10c', 'kirjandus','lummo,tepp'], ['10d', 'matemaatika', 'kiisel'], ['10e', 'kehaline', 'saarva,poom'], ['11a','joonestamine_matemaatika', 'lepiste,mägi'],['11b','B_keel_vene_pr_saksa', '(Matto,Roots,L_Titova,O_Titova)'],['11c','B_keel_vene_pr_saksa,A_keel_inglise', '(Matto,Roots,O_Titova);Hunt'],['11d','B_keel_vene_pr_saksa','(Matto,Roots,L_Titova,O_Titova)'],['11e','fyysika','paaver'],['12b','kirjandus','piirimäe'],['12c','keemia','paabo'],['12d','ühiskonnaõpetus','ristikivi'],['12e','ajalugu','punga']]},
-		     'päev4': {'1': [['10a','matemaatika', 'timak'],['10b', 'informaatika,B_keel_vene_pr_saksa', 'mägi;L_Titova'], ['10c', 'keemia','paabo'], ['10d', 'muusika', 'keerberg'], ['10e', 'matemaatika', 'kiisel'], ['11a','fyysika','reemann'],['11b','matemaatika','hüva'],['11c','ajalugu','pettai'],['11d','kirjandus','mandri,tepp'],['11e','matemaatika','orav'],['12a','ajalugu','punga'],['12b','bioloogia','kaarna'],['12c','kehaline','saarva,poom'],['12d','usundiõpetus','schihalejev'],['12e','kirjandus','pluum']],
-                       '2': [['10a','geograafia', 'seevri'], ['10b', 'informaatika,A_keel_inglise', 'mägi;(köhler,hildebrandt,hunt)'], ['10c',  'B_keel_vene_pr_saksa,A_keel_inglise', 'L_Titova;(köhler,hildebrandt,hunt)'], ['10d', 'B_keel_vene_pr_saksa,A_keel_inglise', 'O_Titova;(köhler,hildebrandt,hunt)'], ['10e', 'ajalugu','pettai'], ['11a','mat_fys_pr', 'reemann,hüva'],['11b','kirjandus','mandri,tepp'],['11c','kirjandus','pluum'],['11d','matemaatika','timak'],['11e','bioloogia','kaarna'],['12a','kehaline','saarva,poom'],['12b','matemaatika','kiisel'],['12c','kirjandus','soodla'],['12d','matemaatika','orav'],['12e','usundiõpetus','schihalejev']],
-                       '3': [['10a','A_keel_inglise', 'köhler,(hildebrandt,hunt,ojaveer)'],  ['10b', 'geograafia', 'seevri'], ['10c', 'matemaatika','kiisel'],['10d', 'C_keel_prantsuse_saksa', 'Niitvägi,Matto'], ['10e', 'A_keel_inglise', 'köhler,(hildebrandt,hunt,ojaveer)'], ['11a','mat_fys_pr', 'reemann,hüva'],['11b','ajalugu','pettai'],['11c','matemaatika','timak'],['11d','kehaline','saarva,poom'],['11e','B_keel_vene,informaatika', 'O_Titova;Mägi'],['12a','kirjandus','pluum'],['12b','ajalugu','punga'],['12c','matemaatika','orav'],['12d','bioloogia','kaarna'],['12e','muusika','keerberg']],
-					   '4': [['10a','muusika', 'keerberg'], ['10b', 'mat_fys_pr','timak,reemann'], ['10c', 'bioloogia','kaarna'], ['10d', 'geograafia', 'seevri'], ['10e', 'kirjandus','pluum'], ['11a','joonestamine_informaatika','lepiste,mägi'],['11b','B_keel_vene_pr_saksa', '(Matto,Roots,L_Titova,O_Titova)'],['11c','B_keel_vene_pr_saksa,A_keel_inglise', '(Matto,Roots,O_Titova);Hunt'],['11d','B_keel_vene_pr_saksa','(Matto,Roots,L_Titova,O_Titova)'],['11e','kehaline','saarva,poom'],['12a','matemaatika','hüva'],['12b','matemaatika','kiisel'],['12c','ajalugu','punga'],['12d','kirjandus','soodla'],['12e','matemaatika','orav']]},
-			 'päev5': {'1': [['10a','muusika', 'keerberg'],['10b','informaatika,B_keel_vene_pr_saksa', 'mägi;L_Titova'], ['10c', 'kehaline','saarva,poom'], ['10d', 'matemaatika', 'kiisel'], ['10e', 'kunst','beier'], ['11a','A_keel_inglise', '(Hunt,Köhler,Ojaveer,Roostoja)'],['11b','matemaatika','hüva'],['11c','ajalugu','pettai'],['11d','matemaatika','timak'],['11e','A_keel_inglise', '(Hunt,Köhler,Ojaveer,Roostoja)'],['12a','fyysika','oks'],['12b','bioloogia','kaarna'],['12c','kirjandus','soodla'],['12d','matemaatika','orav'],['12e','filosoofia','paaver']],
-                       '2': [['10a','kirjandus', 'lummo,tepp'], ['10b', 'mat_fys_pr','timak,reemann'], ['10c', 'bioloogia','kaarna'], ['10d', 'kehaline', 'saarva,poom'], ['10e', 'matemaatika','kiisel'], ['11a','matemaatika','hüva'],['11b','A_keel_inglise', '(Hildebrandt,Ojaveer,Roostoja),Rootsi'],['11c','B_keel_vene_pr_saksa,A_keel_inglise', '(Hildebrandt,Ojaveer,Roostoja);L_Titova'],['11d','A_keel_inglise', '(Hildebrandt,Ojaveer,Roostoja),Köhler'],['11e','muusika','keerberg'],['12a','ühiskonnaõpetus','ristikivi'],['12b','kirjandus','piirimäe'],['12c','fyysika','oks'],['12d','kirjandus','soodla'],['12e','matemaatika','orav']],
-                       '3': [['10a','A_keel_inglise', 'köhler,(hildebrandt,hunt,ojaveer)'],['10b','matemaatika','timak'], ['10c', 'matemaatika','kiisel'], ['10d', 'eesti keel', 'piirimäe'], ['10e','A_keel_inglise', 'köhler,(hildebrandt,hunt,ojaveer)'], ['11a','kirjandus','soodla'],['11b','kehaline','saarva,poom'],['11c','bioloogia','ustav'],['11d','kunst','beier'],['11e','bioloogia','kaarna'],['12a','mat_fys_pr','oks,hüva'],['12b','fyysika','reemann'],['12c','filosoofia','pettai'],['12d','filosoofia','paaver'],['12e','muusika','keerberg']],
-					   '4': [['10a','matemaatika', 'timak'], ['10b', 'kirjandus','piirimäe'],['10c', 'kirjandus','lummo,tepp'],['10d', 'muusika', 'keerberg'],['10e', 'ajalugu', 'pettai'], ['11a','joonestamine_informaatika','lepiste,mägi'],['11b','kirjandus','mandri,tepp'],['11d','bioloogia','kaarna'],['11e','kirjandus','soodla'],['12b','mat_fys_pr','kiisel,oks'],['12c','matemaatika','orav'],['12d','ühiskonnaõpetus','ristikivi'],['12e','kehaline','saarva,poom']]}
+reference = {'day1': {1: [['10a','fyysika', 'oks'], ['10b','matemaatika','timak'], ['10c', 'bioloogia','kaarna'],['10d', 'geograafia','seevri'], ['10e', 'kunst', 'beier'], ['11a','matemaatika','hüva'],['11b','B_keel_vene_pr_saksa', '(Matto,Roots,L_Titova,O_Titova)'],['11c','B_keel_vene_pr_saksa,A_keel_inglise', '(Matto,Roots,O_Titova);Hunt'],['11d','B_keel_vene_pr_saksa','(Matto,Roots,L_Titova,O_Titova)'],['11e','matemaatika','orav'],['12a','kirjandus','pluum'],['12b','fyysika','reemann'],['12c','keemia','paabo'],['12d','fyysika','paaver'],['12e','ajalugu','punga']],
+                       2: [['10a','geograafia', 'seevri'],['10b', 'B_keel_vene_pr_saksa,A_keel_inglise', '(O_Titova,Niitvägi,Matto);roostoja'], ['10c', 'B_keel_vene_pr_saksa,A_keel_inglise', '(O_Titova,Niitvägi,Matto);ojaveer'], ['10d','B_keel_vene_pr_saksa,A_keel_inglise', '(L_Titova,Niitvägi,Matto);rootsi'], ['10e', 'kirjandus', 'pluum'], ['11a','fyysika','reemann'],['11b','matemaatika','hüva'],['11c','matemaatika','timak'],['11d','kunst','beier'],['11e','muusika','keerberg'],['12a','fyysika','oks'],['12b','bioloogia','kaarna'],['12c','ajalugu','punga'],['12d','matemaatika','orav'],['12e','fyysika','paaver']],
+                       3: [['10a','mat_fys_pr', 'timak,reemann'],['10b', 'informaatika,B_keel_vene_pr_saksa', 'mägi;L_Titova'], ['10c', 'muusika', 'keerberg'], ['10d', 'C_keel_prantsuse_saksa', 'Niitvägi,Matto'], ['10e', 'geograafia', 'seevri'], ['11a','A_keel_inglise', '(Hunt,Köhler,Ojaveer,Roostoja)'],['11b','keemia','paabo'],['11c','kirjandus','pluum'],['11d','bioloogia','kaarna'],['11e','A_keel_inglise', '(Hunt,Köhler,Ojaveer,Roostoja)'],['12a','matemaatika','hüva'],['12b','ajalugu','punga'],['12c','filosoofia','pettai'],['12d','usundiõpetus','schihalejev'],['12e','matemaatika','orav']],
+					   4: [['10a','mat_fys_pr', 'timak,reemann'],['10b', 'informaatika,A_keel_inglise', 'mägi;(köhler,hildebrandt,hunt)'], ['10c', 'B_keel_vene_pr_saksa,A_keel_inglise', 'L_Titova;(köhler,hildebrandt,hunt)'], ['10d', 'B_keel_vene_pr_saksa,A_keel_inglise', 'O_Titova;(köhler,hildebrandt,hunt)'], ['10e', 'inimeseõpetus', 'saar'], ['11a','keemia','paabo'],['11b','ajalugu','pettai'],['11c','bioloogia','ustav'],['11d','muusika','keerberg'],['11e','fyysika','paaver'],['12a','matemaatika','hüva'],['12c','matemaatika','orav'],['12d','bioloogia','kaarna'],['12e','usundiõpetus','schihalejev']]},
+             'day2': {1: [['10a','muusika', 'keerberg'], ['10b', 'geograafia', 'seevri'], ['10c', 'keemia', 'paabo'], ['10d', 'matemaatika','kiisel'], ['10e', 'kunst', 'beier'], ['11a','matemaatika','hüva'],['11b','ajalugu','pettai'],['11c','kehaline','saarva,poom'],['11d','bioloogia','kaarna'],['11e','kirjandus','soodla'],['12a','kirjandus','pluum'],['12b','fyysika','reemann'],['12c','fyysika','oks'],['12d','ühiskonnaõpetus','ristikivi'],['12e','filosoofia','paaver']],
+                       2: [['10a','geograafia', 'seevri'],['10b', 'B_keel_vene_pr_saksa,A_keel_inglise', '(O_Titova,Niitvägi,Matto);roostoja'], ['10c',  'B_keel_vene_pr_saksa,A_keel_inglise', '(O_Titova,Niitvägi,Matto);ojaveer'], ['10d', 'B_keel_vene_pr_saksa,A_keel_inglise', '(L_Titova,Niitvägi,Matto);rootsi'], ['10e', 'matemaatika', 'kiisel'], ['11a','kirjandus','soodla'],['11b','mat_fys_pr','reemann,hüva'],['11c','ajalugu','pettai'],['11d','kunst','beier'],['11e','fyysika','paaver'],['12a','ühiskonnaõpetus','ristikivi'],['12b','kirjandus','piirimäe'],['12c','keemia','paabo'],['12d','bioloogia','kaarna'],['12e','kirjandus','pluum']],
+                       3: [['10a','fyysika', 'oks'], ['10b', 'kehaline', 'saarva,poom'], ['10c', 'kirjandus', 'lummo,tepp'], ['10d', 'eesti keel', 'piirimäe'], ['10e', 'ajalugu', 'pettai'], ['11a','fyysika','reemann'],['11b','A_keel_inglise', '(Hildebrandt,Ojaveer,Roostoja),Rootsi'],['11c','B_keel_vene_pr_saksa,A_keel_inglise', '(Hildebrandt,Ojaveer,Roostoja);L_Titova'],['11d','A_keel_inglise', '(Hildebrandt,Ojaveer,Roostoja),Köhler'],['11e','B_keel_vene,informaatika', 'O_Titova;Mägi'],['12a','matemaatika', 'hüva'],['12b','matemaatika','kiisel'],['12c','kirjandus','soodla'],['12d','fyysika','paaver'],['12e','muusika','keerberg']],
+					   4: [['10a','kirjandus', 'lummo,tepp'], ['10b', 'informaatika,A_keel_inglise', 'mägi;(köhler,hildebrandt,hunt)'], ['10c', 'B_keel_vene_pr_saksa,A_keel_inglise', 'L_Titova;(köhler,hildebrandt,hunt)'], ['10d', 'B_keel_vene_pr_saksa,A_keel_inglise', 'O_Titova;(köhler,hildebrandt,hunt)'], ['10e', 'geograafia', 'seevri'], ['11a','keemia','paabo'],['11b','mat_fys_pr','reemann,hüva'],['11c','bioloogia','ustav'],['11d','muusika','keerberg'],['11e','bioloogia','kaarna'],['12a','ajalugu','punga'],['12b','mat_fys_pr','kiisel,oks'],['12c','filosoofia','pettai'],['12d','kehaline','saarva,poom'],['12e','fyysika','paaver']],
+					   5: [['10a','kehaline', 'saarva,poom'], ['10b', 'kirjandus', 'piirimäe'], ['10c', 'muusika', 'keerberg'], ['10d', 'geograafia', 'seevri'], ['10e', 'inimeseõpetus', 'saar'], ['11a','A_keel_inglise', '(Hunt,Köhler,Ojaveer,Roostoja)'],['11b','keemia','paabo'],['11d','kirjandus','mandri,tepp'],['11e','A_keel_inglise', '(Hunt,Köhler,Ojaveer,Roostoja)'],['12a','mat_fys_pr', 'oks,hüva'],['12d','kirjandus','soodla'],['12e','ajalugu','punga']]},
+			 'day3': {1: [['10a','fyysika', 'oks'],['10b',  'B_keel_vene_pr_saksa,A_keel_inglise', '(O_Titova,Niitvägi,Matto);roostoja'], ['10c', 'B_keel_vene_pr_saksa,A_keel_inglise', '(O_Titova,Niitvägi,Matto);ojaveer'], ['10d','B_keel_vene_pr_saksa,A_keel_inglise', '(L_Titova,Niitvägi,Matto);rootsi'], ['10e', 'kirjandus','pluum'], ['11a','kehaline', 'saarva,poom'],['11b','keemia','paabo'],['11c','matemaatika','timak'],['11d','kirjandus','mandri,tepp'],['11e','kirjandus','soodla'],['12a','ajalugu','punga'],['12b','matemaatika','kiisel'],['12c','matemaatika','orav'],['12d','usundiõpetus','schihalejev'],['12e','fyysika','paaver']],
+                       2: [['10a','A_keel_inglise', 'köhler,(hildebrandt,hunt,ojaveer)'], ['10b', 'kirjandus', 'piirimäe'], ['10c', 'keemia', 'paabo'], ['10d', 'C_keel_prantsuse_saksa', 'Niitvägi,Matto'],['10e', 'A_keel_inglise', 'köhler,(hildebrandt,hunt,ojaveer)'], ['11a','kirjandus', 'soodla'],['11b','kirjandus','mandri,tepp'],['11c','kirjandus','pluum'],['11d','matemaatika','timak'],['11e','matemaatika','orav'],['12a','fyysika', 'oks'],['12b','kehaline','saarva,poom'],['12c','ajalugu','punga'],['12d','fyysika','paaver'],['12e','usundiõpetus','schihalejev']],
+                       3: [['10a','kirjandus', 'lummo,tepp'], ['10b','matemaatika','timak'], ['10c', 'matemaatika','kiisel'], ['10d', 'eesti keel', 'piirimäe'], ['10e', 'geograafia', 'seevri'], ['11a','keemia', 'paabo'],['11b','A_keel_inglise', '(Hildebrandt,Ojaveer,Roostoja),Rootsi'],['11c','B_keel_vene_pr_saksa,A_keel_inglise', '(Hildebrandt,Ojaveer,Roostoja);L_Titova'],['11d','A_keel_inglise', '(Hildebrandt,Ojaveer,Roostoja),Köhler'],['11e','B_keel_vene,informaatika', 'O_Titova;Mägi'],['12a','ühiskonnaõpetus', 'ristikivi'],['12b','ajalugu','punga'],['12c','fyysika','oks'],['12d','filosoofia','paaver'],['12e','kirjandus','pluum']],
+					   4: [['10a','matemaatika', 'timak'], ['10b', 'geograafia', 'seevri'], ['10c', 'kirjandus','lummo,tepp'], ['10d', 'matemaatika', 'kiisel'], ['10e', 'kehaline', 'saarva,poom'], ['11a','joonestamine_matemaatika', 'lepiste,mägi'],['11b','B_keel_vene_pr_saksa', '(Matto,Roots,L_Titova,O_Titova)'],['11c','B_keel_vene_pr_saksa,A_keel_inglise', '(Matto,Roots,O_Titova);Hunt'],['11d','B_keel_vene_pr_saksa','(Matto,Roots,L_Titova,O_Titova)'],['11e','fyysika','paaver'],['12b','kirjandus','piirimäe'],['12c','keemia','paabo'],['12d','ühiskonnaõpetus','ristikivi'],['12e','ajalugu','punga']]},
+		     'day4': {1: [['10a','matemaatika', 'timak'],['10b', 'informaatika,B_keel_vene_pr_saksa', 'mägi;L_Titova'], ['10c', 'keemia','paabo'], ['10d', 'muusika', 'keerberg'], ['10e', 'matemaatika', 'kiisel'], ['11a','fyysika','reemann'],['11b','matemaatika','hüva'],['11c','ajalugu','pettai'],['11d','kirjandus','mandri,tepp'],['11e','matemaatika','orav'],['12a','ajalugu','punga'],['12b','bioloogia','kaarna'],['12c','kehaline','saarva,poom'],['12d','usundiõpetus','schihalejev'],['12e','kirjandus','pluum']],
+                       2: [['10a','geograafia', 'seevri'], ['10b', 'informaatika,A_keel_inglise', 'mägi;(köhler,hildebrandt,hunt)'], ['10c',  'B_keel_vene_pr_saksa,A_keel_inglise', 'L_Titova;(köhler,hildebrandt,hunt)'], ['10d', 'B_keel_vene_pr_saksa,A_keel_inglise', 'O_Titova;(köhler,hildebrandt,hunt)'], ['10e', 'ajalugu','pettai'], ['11a','mat_fys_pr', 'reemann,hüva'],['11b','kirjandus','mandri,tepp'],['11c','kirjandus','pluum'],['11d','matemaatika','timak'],['11e','bioloogia','kaarna'],['12a','kehaline','saarva,poom'],['12b','matemaatika','kiisel'],['12c','kirjandus','soodla'],['12d','matemaatika','orav'],['12e','usundiõpetus','schihalejev']],
+                       3: [['10a','A_keel_inglise', 'köhler,(hildebrandt,hunt,ojaveer)'],  ['10b', 'geograafia', 'seevri'], ['10c', 'matemaatika','kiisel'],['10d', 'C_keel_prantsuse_saksa', 'Niitvägi,Matto'], ['10e', 'A_keel_inglise', 'köhler,(hildebrandt,hunt,ojaveer)'], ['11a','mat_fys_pr', 'reemann,hüva'],['11b','ajalugu','pettai'],['11c','matemaatika','timak'],['11d','kehaline','saarva,poom'],['11e','B_keel_vene,informaatika', 'O_Titova;Mägi'],['12a','kirjandus','pluum'],['12b','ajalugu','punga'],['12c','matemaatika','orav'],['12d','bioloogia','kaarna'],['12e','muusika','keerberg']],
+					   4: [['10a','muusika', 'keerberg'], ['10b', 'mat_fys_pr','timak,reemann'], ['10c', 'bioloogia','kaarna'], ['10d', 'geograafia', 'seevri'], ['10e', 'kirjandus','pluum'], ['11a','joonestamine_informaatika','lepiste,mägi'],['11b','B_keel_vene_pr_saksa', '(Matto,Roots,L_Titova,O_Titova)'],['11c','B_keel_vene_pr_saksa,A_keel_inglise', '(Matto,Roots,O_Titova);Hunt'],['11d','B_keel_vene_pr_saksa','(Matto,Roots,L_Titova,O_Titova)'],['11e','kehaline','saarva,poom'],['12a','matemaatika','hüva'],['12b','matemaatika','kiisel'],['12c','ajalugu','punga'],['12d','kirjandus','soodla'],['12e','matemaatika','orav']]},
+			 'day5': {1: [['10a','muusika', 'keerberg'],['10b','informaatika,B_keel_vene_pr_saksa', 'mägi;L_Titova'], ['10c', 'kehaline','saarva,poom'], ['10d', 'matemaatika', 'kiisel'], ['10e', 'kunst','beier'], ['11a','A_keel_inglise', '(Hunt,Köhler,Ojaveer,Roostoja)'],['11b','matemaatika','hüva'],['11c','ajalugu','pettai'],['11d','matemaatika','timak'],['11e','A_keel_inglise', '(Hunt,Köhler,Ojaveer,Roostoja)'],['12a','fyysika','oks'],['12b','bioloogia','kaarna'],['12c','kirjandus','soodla'],['12d','matemaatika','orav'],['12e','filosoofia','paaver']],
+                       2: [['10a','kirjandus', 'lummo,tepp'], ['10b', 'mat_fys_pr','timak,reemann'], ['10c', 'bioloogia','kaarna'], ['10d', 'kehaline', 'saarva,poom'], ['10e', 'matemaatika','kiisel'], ['11a','matemaatika','hüva'],['11b','A_keel_inglise', '(Hildebrandt,Ojaveer,Roostoja),Rootsi'],['11c','B_keel_vene_pr_saksa,A_keel_inglise', '(Hildebrandt,Ojaveer,Roostoja);L_Titova'],['11d','A_keel_inglise', '(Hildebrandt,Ojaveer,Roostoja),Köhler'],['11e','muusika','keerberg'],['12a','ühiskonnaõpetus','ristikivi'],['12b','kirjandus','piirimäe'],['12c','fyysika','oks'],['12d','kirjandus','soodla'],['12e','matemaatika','orav']],
+                       3: [['10a','A_keel_inglise', 'köhler,(hildebrandt,hunt,ojaveer)'],['10b','matemaatika','timak'], ['10c', 'matemaatika','kiisel'], ['10d', 'eesti keel', 'piirimäe'], ['10e','A_keel_inglise', 'köhler,(hildebrandt,hunt,ojaveer)'], ['11a','kirjandus','soodla'],['11b','kehaline','saarva,poom'],['11c','bioloogia','ustav'],['11d','kunst','beier'],['11e','bioloogia','kaarna'],['12a','mat_fys_pr','oks,hüva'],['12b','fyysika','reemann'],['12c','filosoofia','pettai'],['12d','filosoofia','paaver'],['12e','muusika','keerberg']],
+					   4: [['10a','matemaatika', 'timak'], ['10b', 'kirjandus','piirimäe'],['10c', 'kirjandus','lummo,tepp'],['10d', 'muusika', 'keerberg'],['10e', 'ajalugu', 'pettai'], ['11a','joonestamine_informaatika','lepiste,mägi'],['11b','kirjandus','mandri,tepp'],['11d','bioloogia','kaarna'],['11e','kirjandus','soodla'],['12b','mat_fys_pr','kiisel,oks'],['12c','matemaatika','orav'],['12d','ühiskonnaõpetus','ristikivi'],['12e','kehaline','saarva,poom']]}
                   }
 
 def evaluate_result(schedule, optimal_lessons):
@@ -109,21 +110,202 @@ def evaluate_result(schedule, optimal_lessons):
                 score += 5*(max(lessons)-5)
     return score
 
-def greedy(lessondata,max_days,max_hours, max_per_day):
-    random_lesson_keys = list(lessondata.keys())
-    shuffle(random_lesson_keys)
+def simulated_anneal(greedy_output,max_lesson):
+    old_cost = evaluate_result(greedy_output,max_lesson)
+    T = 1.0
+    T_min = 0.01
+    alpha = 0.9
+    while T > T_min:
+        i = 1
+        #print('iter')
+        while i <= 100:
+            ####choose whichever is currently needed
+            #new_solution = permute_whole_slot(greedy_output)
+            #new_solution = permutewithinteacher(greedy_output)
+            new_solution = permutewithinteacher_nomissingclass(greedy_output)
+            new_cost = evaluate_result(new_solution,max_lesson)
+            #print(new_cost)
+            #print(old_cost)
+            ap = acceptprob(old_cost, new_cost, T)
+            #print(ap)
+            if ap > random.random():
+            #    print("test")
+                greedy_output = new_solution
+                old_cost = new_cost
+            i += 1
+            #print("iteration")
+        T *= alpha
+    return greedy_output, old_cost
+
+def permute_whole_slot(anneal_intermed):
+    ##take one whole slot and change with another -- confilcts impossible, easiest solution
+    firstday = 'dum1'
+    secondday = 'dum1'
+    firstslot = 'slot1'
+    secondslot = 'slot1'
+    while firstday == secondday and firstslot == secondslot:
+        firstday = 'day' + str(random.randint(1,len(anneal_intermed)))
+        firstslot = random.randint(1, len(anneal_intermed[firstday]))
+        secondday = 'day' + str(random.randint(1, len(anneal_intermed)))
+        secondslot = random.randint(1, len(anneal_intermed[secondday]))
+        anneal_intermed[firstday][firstslot],anneal_intermed[secondday][secondslot] = \
+            anneal_intermed[secondday][secondslot],anneal_intermed[firstday][firstslot]
+    return anneal_intermed
+
+def define_slot(anneal_intermed):
+    firstday = 'dum1'
+    secondday = 'dum1'
+    firstslot = 'slot1'
+    secondslot = 'slot1'
+    while firstday == secondday and firstslot == secondslot:
+        firstday = 'day' + str(random.randint(1, len(anneal_intermed)))
+        firstslot = random.randint(1, len(anneal_intermed[firstday]))
+        secondday = 'day' + str(random.randint(1, len(anneal_intermed)))
+        secondslot = random.randint(1, len(anneal_intermed[secondday]))
+    return firstday,firstslot,secondday,secondslot
+
+def permutewithinteacher(anneal_intermed):
+    candidates = []
+    counter = 0
+    emptyslot = False
+    while len(candidates) == 0:
+        if counter == 30:
+            counter = 0
+        if counter == 0:
+            firstday,firstslot,secondday,secondslot = define_slot(anneal_intermed)
+            class_present = True
+        try:
+            n = random.randint(1, len(anneal_intermed[firstday][firstslot]))
+            first_teachers = anneal_intermed[firstday][firstslot][n - 1][2].replace(';', ',').lower().strip('()').split(',')
+            first_classes = anneal_intermed[firstday][firstslot][n - 1][0]
+            addable = True
+            class_present = False
+            for i in anneal_intermed[secondday][secondslot]:
+                if i[0] == first_classes:
+                    class_present = True
+                    candidates.append(i)
+                for j in i[2].replace(';', ',').lower().strip('()').split(','):
+                    if j in first_teachers:
+                        addable = False
+                if not addable:
+                    candidates = []
+                    break
+            for k in candidates:
+                for i in anneal_intermed[firstday][firstslot]:
+                        for j in i[2].replace(';', ',').lower().strip('()').split(','):
+                            if j in k[2].replace(';', ',').lower().strip('()').split(','):
+                                try:
+                                    candidates.remove(k)
+                                except ValueError:
+                                    pass
+            if not class_present:
+                for i in anneal_intermed[secondday][secondslot]:
+                    candidates.append(i)
+                    for j in i[2].replace(';', ',').lower().strip('()').split(','):
+                        if j in first_teachers:
+                            addable = False
+                    if not addable:
+                        candidates = []
+                        break
+        except ValueError:
+            n = random.randint(1, len(anneal_intermed[secondday][secondslot]))
+            candidates = [anneal_intermed[secondday][secondslot][n-1]]
+            emptyslot = True
+    if emptyslot:
+        candidate = random.sample(candidates, 1)
+        indeks = anneal_intermed[secondday][secondslot].index(candidate[0])
+        anneal_intermed[firstday][firstslot] = candidate[0]
+        try:
+            anneal_intermed[secondday][secondslot] = anneal_intermed[secondday][secondslot][:indeks] + \
+                                                     anneal_intermed[secondday][secondslot][indeks+1:]
+        except IndexError:
+            anneal_intermed[secondday][secondslot] = anneal_intermed[secondday][secondslot][:indeks]
+    elif not class_present:
+        anneal_intermed[secondday][secondslot] += [anneal_intermed[firstday][firstslot][n - 1]]
+        try:
+            anneal_intermed[firstday][firstslot] = anneal_intermed[firstday][firstslot][:n - 1] + \
+                                               anneal_intermed[firstday][firstslot][n:]
+        except IndexError:
+            anneal_intermed[firstday][firstslot] = anneal_intermed[firstday][firstslot][:n - 1]
+    else:
+        candidate = random.sample(candidates,1)
+        indeks = anneal_intermed[secondday][secondslot].index(candidate[0])
+        anneal_intermed[firstday][firstslot][n - 1], anneal_intermed[secondday][secondslot][indeks] = \
+            anneal_intermed[secondday][secondslot][indeks], anneal_intermed[firstday][firstslot][n - 1]
+    return anneal_intermed
+
+def permutewithinteacher_nomissingclass(anneal_intermed):
+    candidates = []
+    counter = 0
+    emptyslot = False
+    while len(candidates) == 0:
+        if counter == 30:
+            counter = 0
+        if counter == 0:
+            firstday,firstslot,secondday,secondslot = define_slot(anneal_intermed)
+        try:
+            n = random.randint(1, len(anneal_intermed[firstday][firstslot]))
+            first_teachers = anneal_intermed[firstday][firstslot][n - 1][2].replace(';', ',').lower().strip('()').split(',')
+            first_classes = anneal_intermed[firstday][firstslot][n - 1][0]
+            addable = True
+            for i in anneal_intermed[secondday][secondslot]:
+                if i[0] == first_classes:
+                    candidates.append(i)
+                for j in i[2].replace(';', ',').lower().strip('()').split(','):
+                    if j in first_teachers:
+                        addable = False
+                if not addable:
+                    candidates = []
+                    break
+            for k in candidates:
+                for i in anneal_intermed[firstday][firstslot]:
+                        for j in i[2].replace(';', ',').lower().strip('()').split(','):
+                            if j in k[2].replace(';', ',').lower().strip('()').split(','):
+                                try:
+                                    candidates.remove(k)
+                                except ValueError:
+                                    pass
+        except ValueError:
+            n = random.randint(1, len(anneal_intermed[secondday][secondslot]))
+            candidates = [anneal_intermed[secondday][secondslot][n-1]]
+            emptyslot = True
+    if emptyslot:
+        candidate = random.sample(candidates, 1)
+        indeks = anneal_intermed[secondday][secondslot].index(candidate[0])
+        anneal_intermed[firstday][firstslot] = candidate[0]
+        try:
+            anneal_intermed[secondday][secondslot] = anneal_intermed[secondday][secondslot][:indeks] + \
+                                                     anneal_intermed[secondday][secondslot][indeks+1:]
+        except IndexError:
+            anneal_intermed[secondday][secondslot] = anneal_intermed[secondday][secondslot][:indeks]
+    else:
+        candidate = random.sample(candidates,1)
+        indeks = anneal_intermed[secondday][secondslot].index(candidate[0])
+        anneal_intermed[firstday][firstslot][n - 1], anneal_intermed[secondday][secondslot][indeks] = \
+            anneal_intermed[secondday][secondslot][indeks], anneal_intermed[firstday][firstslot][n - 1]
+    return anneal_intermed
+
+def acceptprob(old_cost, new_cost, T):
+    if new_cost < old_cost:
+        probability = 1
+    else:
+        probability = exp(-(new_cost-old_cost)/T)
+    return probability
+
+
+def greedy(lessondata,max_days,max_hours):
     lessonplan = {}
     for i in range(max_days):
-        lessonplan['day' + str(i)] = {}
+        lessonplan['day' + str(i+1)] = {}
         max_lessons = []
         for j in range(max_hours):
-            lessonplan['day' + str(i)][j] = []
-            for k in random_lesson_keys:
+            lessonplan['day' + str(i+1)][j+1] = []
+            for k in lessondata:
                 if int(lessondata[k][3]) > 0:
                     toadd = [lessondata[k][0],lessondata[k][1],lessondata[k][2]]
                     addable = True
                     if not [lessondata[k][0],lessondata[k][1]] in max_lessons:
-                        for l in lessonplan['day' + str(i)][j]:
+                        for l in lessonplan['day' + str(i+1)][j+1]:
                             #print(l)
                             for a in lessondata[k][0].split(','):
                                 #print(a)
@@ -140,16 +322,16 @@ def greedy(lessondata,max_days,max_hours, max_per_day):
                             if not addable:
                                 break
                         if addable:
-                            lessonplan['day' + str(i)][j].append(toadd)
+                            lessonplan['day' + str(i+1)][j+1].append(toadd)
                             max_lessons.append([toadd[0],toadd[1]])
                             lessondata[k][3] = str(int(lessondata[k][3]) - 1)
     for i in range(max_days):
         for j in range(max_hours):
-            for k in random_lesson_keys:
+            for k in lessondata:
                 if int(lessondata[k][3]) > 0:
                     toadd = [lessondata[k][0],lessondata[k][1],lessondata[k][2]]
                     addable = True
-                    for l in lessonplan['day' + str(i)][j]:
+                    for l in lessonplan['day' + str(i+1)][j+1]:
                         for a in lessondata[k][0].split(','):
                             #print(a)
                             if a in l[0]:
@@ -164,32 +346,34 @@ def greedy(lessondata,max_days,max_hours, max_per_day):
                         if not addable:
                             break
                     if addable:
-                        lessonplan['day' + str(i)][j].append(toadd)
+                        lessonplan['day' + str(i+1)][j+1].append(toadd)
                         lessondata[k][3] = str(int(lessondata[k][3]) - 1)
     test_result = []
     for i in lessondata:
+        #print(i)
+        #print(lessondata[i])
         if int(lessondata[i][3]) > 0:
-            #print(lessondata[i])
             test_result.append(lessondata[i])
-    return (lessonplan, test_result)
+    return (lessonplan,test_result)
 
-
-
-#print(readlessondata('Algo_Project_data.txt'))
-#print(evaluate_result(test_dict,5))
-#print(evaluate_result(test_dict2,5))
-print(evaluate_result(reference, 5))
+#print(evaluate_result(reference, 5))
 bilbo = []
-for i in range(5):
-    a, ta = greedy(readlessondata("Algo_Project_data_changed.txt"), 5, 5, 6)
+minimum = 100000
+
+for i in range(2):
+    a, ta = greedy(readlessondata("Algo_Project_data_changed.txt"), 5, 5)
     bilbo.append(a)
-    if len(ta) > 0:
-        print(i)
+    #print(evaluate_result(a,5))
+    if evaluate_result(a, 5) < minimum and len(ta) == 0:
+        minimum = evaluate_result(a, 5)
+        minimal = a
 
-for i in range(len(bilbo)):
-    for j in range(i, len(bilbo)):
-        if bilbo[i] == bilbo[j] and i != j:
-            print(i, j)
-
+print(minimal)
+#print(minimum)
+#print(minimal)
+print(evaluate_result(reference,5))
+print(simulated_anneal(reference,5)[1])
+print(evaluate_result(minimal,5))
+print(simulated_anneal(minimal, 5)[1])
 
 
