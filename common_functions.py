@@ -295,12 +295,14 @@ def acceptprob(old_cost, new_cost, T):
 
 def greedy(lessondata,max_days,max_hours):
     lessonplan = {}
+    random_lesson_keys = list(lessondata.keys())
+    shuffle(random_lesson_keys)
     for i in range(max_days):
         lessonplan['day' + str(i+1)] = {}
         max_lessons = []
         for j in range(max_hours):
             lessonplan['day' + str(i+1)][j+1] = []
-            for k in lessondata:
+            for k in random_lesson_keys:
                 if int(lessondata[k][3]) > 0:
                     toadd = [lessondata[k][0],lessondata[k][1],lessondata[k][2]]
                     addable = True
@@ -327,7 +329,7 @@ def greedy(lessondata,max_days,max_hours):
                             lessondata[k][3] = str(int(lessondata[k][3]) - 1)
     for i in range(max_days):
         for j in range(max_hours):
-            for k in lessondata:
+            for k in random_lesson_keys:
                 if int(lessondata[k][3]) > 0:
                     toadd = [lessondata[k][0],lessondata[k][1],lessondata[k][2]]
                     addable = True
@@ -368,12 +370,12 @@ for i in range(2):
         minimum = evaluate_result(a, 5)
         minimal = a
 
-print(minimal)
-#print(minimum)
 #print(minimal)
+#print(minimum)
+print(minimal)
+print(minimum)
 print(evaluate_result(reference,5))
 print(simulated_anneal(reference,5)[1])
 print(evaluate_result(minimal,5))
 print(simulated_anneal(minimal, 5)[1])
-
 
