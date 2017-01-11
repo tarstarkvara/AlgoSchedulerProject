@@ -1,0 +1,24 @@
+----------
+Starting minimum: 161
+Parameters are: start_reps:125, annealing_start_T:1, annealing_factor:0.90 
+Evaluated answer: 161 
+----------
+Starting minimum: 191
+Parameters are: start_reps:125, annealing_start_T:1, annealing_factor:0.99 
+Evaluated answer: 195 
+----------
+Starting minimum: 120
+Parameters are: start_reps:125, annealing_start_T:10, annealing_factor:0.99 
+Evaluated answer: 120 
+----------
+Starting minimum: 159
+Parameters are: start_reps:250, annealing_start_T:5, annealing_factor:0.95 
+Evaluated answer: 159 
+----------
+Starting minimum: 177
+Parameters are: start_reps:250, annealing_start_T:12, annealing_factor:0.98 
+Evaluated answer: 149 
+----------
+Starting minimum: 193
+Parameters are: start_reps:250, annealing_start_T:15, annealing_factor:0.98 
+Evaluated answer: 201 
