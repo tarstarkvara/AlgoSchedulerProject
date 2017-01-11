@@ -110,11 +110,11 @@ def evaluate_result(schedule, optimal_lessons):
                 score += 5*(max(lessons)-5)
     return score
 
-def simulated_anneal(greedy_output,max_lesson):
+def simulated_anneal(greedy_output,max_lesson, start_T=1.0, alfa=0.9):
     old_cost = evaluate_result(greedy_output,max_lesson)
-    T = 1.0
+    T = start_T
     T_min = 0.01
-    alpha = 0.9
+    alpha = alfa
     while T > T_min:
         i = 1
         #print('iter')
@@ -362,20 +362,48 @@ def greedy(lessondata,max_days,max_hours):
 bilbo = []
 minimum = 100000
 
-for i in range(2):
+
+def output_data(output_file, start_reps, annealing_start_T, annealing_factor, optimal_lessons, max_hours):
+    minim = 100000
+    cur_best, cur_fail = greedy(readlessondata("Algo_Project_data_changed.txt"), 5, max_hours)
+    for i in range(start_reps):
+        cur, cur_fail = greedy(readlessondata("Algo_Project_data_changed.txt"), 5, max_hours)
+        tmp_min = evaluate_result(cur, optimal_lessons)
+        if tmp_min < minimum and len(cur_fail) == 0:
+            minim = tmp_min
+            cur_best, cur_fail = cur, cur_fail
+    print(cur_best)
+
+    with open(output_file, "a") as f:
+        f.write("----------\n")
+        f.write("Starting minimum: %d\n" % minim)
+        f.write("Parameters are: start_reps:%d, annealing_start_T:%d, annealing_factor:%0.2f \n"
+                % (start_reps, annealing_start_T, annealing_factor))
+        ref, ref_fail = simulated_anneal(cur_best, max_hours, annealing_start_T, annealing_factor)
+        #f.write(str(ref) + "\n")
+        f.write("Evaluated answer: %d \n" % evaluate_result(ref, optimal_lessons))
+
+"""
+for i in range(3):
     a, ta = greedy(readlessondata("Algo_Project_data_changed.txt"), 5, 5)
     bilbo.append(a)
     #print(evaluate_result(a,5))
-    if evaluate_result(a, 5) < minimum and len(ta) == 0:
-        minimum = evaluate_result(a, 5)
+    tmp_min = evaluate_result(a, 5)
+    if tmp_min < minimum and len(ta) == 0:
+        minimum = tmp_min
         minimal = a
-
+        print(minimum)
+"""
 #print(minimal)
 #print(minimum)
-print(minimal)
-print(minimum)
-print(evaluate_result(reference,5))
-print(simulated_anneal(reference,5)[1])
-print(evaluate_result(minimal,5))
-print(simulated_anneal(minimal, 5)[1])
+#print(minimal)
+#print(minimum)
+#print(evaluate_result(reference,5))
+#print(simulated_anneal(reference,5)[1])
+#print(evaluate_result(minimal,5))
+#print(simulated_anneal(minimal, 5)[1])
+#print(minimum)
+
+output_data(output_file="data.txt", start_reps=250, annealing_start_T=15.0,
+            annealing_factor=0.98, optimal_lessons=5, max_hours=5)
 
