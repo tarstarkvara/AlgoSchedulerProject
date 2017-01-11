@@ -363,25 +363,32 @@ bilbo = []
 minimum = 100000
 
 
-def output_data(output_file, start_reps, annealing_start_T, annealing_factor, optimal_lessons, max_hours):
-    minim = 100000
-    cur_best, cur_fail = greedy(readlessondata("Algo_Project_data_changed.txt"), 5, max_hours)
-    for i in range(start_reps):
-        cur, cur_fail = greedy(readlessondata("Algo_Project_data_changed.txt"), 5, max_hours)
-        tmp_min = evaluate_result(cur, optimal_lessons)
-        if tmp_min < minimum and len(cur_fail) == 0:
-            minim = tmp_min
-            cur_best, cur_fail = cur, cur_fail
-    print(cur_best)
+def output_data(output_file, outer_reps, start_reps, inner_reps, annealing_start_T, annealing_factor, optimal_lessons, max_hours):
+    dta = []
+    for m in range(outer_reps):
+        minim = 100000
+        cur_best, cur_fail = greedy(readlessondata("Algo_Project_data_changed.txt"), 5, max_hours)
+        for i in range(start_reps):
+            cur, cur_fail = greedy(readlessondata("Algo_Project_data_changed.txt"), 5, max_hours)
+            tmp_min = evaluate_result(cur, optimal_lessons)
+            if tmp_min < minimum and len(cur_fail) == 0:
+                minim = tmp_min
+                cur_best, cur_fail = cur, cur_fail
+        start_min = minim
+
+        for j in range(inner_reps):
+            tmp_ref, tmp_new_val = simulated_anneal(cur_best, max_hours, annealing_start_T, annealing_factor)
+            if tmp_new_val < minim:
+                cur_best, tmp_fail = tmp_ref, cur_fail
+                minim = tmp_new_val
+        print(m)
+        dta.append([start_min, minim])
 
     with open(output_file, "a") as f:
         f.write("----------\n")
-        f.write("Starting minimum: %d\n" % minim)
         f.write("Parameters are: start_reps:%d, annealing_start_T:%d, annealing_factor:%0.2f \n"
                 % (start_reps, annealing_start_T, annealing_factor))
-        ref, ref_fail = simulated_anneal(cur_best, max_hours, annealing_start_T, annealing_factor)
-        #f.write(str(ref) + "\n")
-        f.write("Evaluated answer: %d \n" % evaluate_result(ref, optimal_lessons))
+        f.write("Results: %s\n" % str(dta))
 
 """
 for i in range(3):
@@ -404,6 +411,6 @@ for i in range(3):
 #print(simulated_anneal(minimal, 5)[1])
 #print(minimum)
 
-output_data(output_file="data.txt", start_reps=250, annealing_start_T=15.0,
-            annealing_factor=0.98, optimal_lessons=5, max_hours=5)
+output_data(output_file="data.txt", outer_reps=2, start_reps=200, inner_reps=4, annealing_start_T=1.0,
+            annealing_factor=0.85, optimal_lessons=5, max_hours=5)
 
