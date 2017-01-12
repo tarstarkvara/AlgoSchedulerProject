@@ -136,34 +136,66 @@ def isValid(schedule):
     return faults == 0
 
 
-def printInfo(schedule):
-    print("Score: " + str(evaluate_result(schedule)))
+def printResult(schedule):
+    score = evaluate_result(schedule)
+    # print("Score: " + str(score))
     # print(isValid(schedule))
+    return score
 
 
-def runTests():
+def runTests(tests):
 
-    for i in range(100):
+    greedyFF = 0
+    greedyTF = 0
+    greedyFT = 0
+    greedyTT = 0
+
+    greedyTeacherFF = 0
+    greedyTeacherTF = 0
+    greedyTeacherFT = 0
+    greedyTeacherTT = 0
+
+    greedySubjectFF = 0
+    greedySubjectTF = 0
+    greedySubjectFT = 0
+    greedySubjectTT = 0
+
+    for i in range(tests):
 
         # No shuffle
-        printInfo(greedy(False, False))
-        printInfo(greedyTeacher(False, False))
-        printInfo(greedySubject(False, False))
+        greedyFF += printResult(greedy(False, False))
+        greedyTeacherFF += printResult(greedyTeacher(False, False))
+        greedySubjectFF += printResult(greedySubject(False, False))
 
         # Shuffle days
-        printInfo(greedy(True, False))
-        printInfo(greedyTeacher(True, False))
-        printInfo(greedySubject(True, False))
+        greedyTF += printResult(greedy(True, False))
+        greedyTeacherTF += printResult(greedyTeacher(True, False))
+        greedySubjectTF += printResult(greedySubject(True, False))
 
         # Shuffle hours
-        printInfo(greedy(False, True))
-        printInfo(greedyTeacher(False, True))
-        printInfo(greedySubject(False, True))
+        greedyFT += printResult(greedy(False, True))
+        greedyTeacherFT += printResult(greedyTeacher(False, True))
+        greedySubjectFT += printResult(greedySubject(False, True))
 
         # Shuffle days and hours
-        printInfo(greedy(True, True))
-        printInfo(greedyTeacher(True, True))
-        printInfo(greedySubject(True, True))
+        greedyTT += printResult(greedy(True, True))
+        greedyTeacherTT += printResult(greedyTeacher(True, True))
+        greedySubjectTT += printResult(greedySubject(True, True))
+
+    print("GreedyFF: " + str(greedyFF / tests))
+    print("GreedyTF: " + str(greedyTF / tests))
+    print("GreedyFT: " + str(greedyFT / tests))
+    print("GreedyTT: " + str(greedyTT / tests))
+
+    print("GreedyTeacherFF: " + str(greedyTeacherFF / tests))
+    print("GreedyTeacherTF: " + str(greedyTeacherTF / tests))
+    print("GreedyTeacherFT: " + str(greedyTeacherFT / tests))
+    print("GreedyTeacherTT: " + str(greedyTeacherTT / tests))
+
+    print("GreedySubjectFF: " + str(greedySubjectFF / tests))
+    print("GreedySubjectTF: " + str(greedySubjectTF / tests))
+    print("GreedySubjectFT: " + str(greedySubjectFT / tests))
+    print("GreedySubjectTT: " + str(greedySubjectTT / tests))
 
 
-runTests()
+runTests(1000)
