@@ -17,6 +17,7 @@ def readData(filename):
     f.close()
     return lessons
 
+
 def evaluate_result(schedule):
     score = 0
     teachers = defaultdict(defaultdict)
@@ -61,9 +62,10 @@ def evaluate_result(schedule):
                 score += 5 * (max(lessons) - 5)
     return score
 
-def greedy(days, hours, shuffleDays, shuffleHours):
+
+def greedy(shuffleDays, shuffleHours):
     lessons = readData("Algo_Project_data.txt")
-    schedule = Schedule(days, hours)
+    schedule = Schedule(5, 5)
 
     for lesson in lessons:
         for i in range(lesson.times):
@@ -72,6 +74,7 @@ def greedy(days, hours, shuffleDays, shuffleHours):
                 schedule.addLesson(lesson, day, hour)
 
     return schedule
+
 
 def isValid(schedule):
     faults = 0
@@ -82,24 +85,82 @@ def isValid(schedule):
                 if (lesson.teacher in busyTeachers):
                     faults += 1
                 busyTeachers.append(lesson.teacher)
+    print("Faults: " + str(faults))
     return faults == 0
 
-# No shuffle
-schedule = greedy(5, 5, False, False)
-print(evaluate_result(schedule))
-print(isValid(schedule))
+def greedyTeacher(shuffleDays, shuffleHours):
+    lessons = readData("Algo_Project_data.txt")
+    schedule = Schedule(5, 5)
 
-# Shuffle days
-schedule = greedy(5, 5, True, False)
-print(evaluate_result(schedule))
-print(isValid(schedule))
+    # Get all teachers
+    teachers = []
+    for lesson in lessons:
+        for teacher in lesson.teachers:
+            if (teacher not in teachers):
+                teachers.append(teacher)
 
-# Shuffle hours
-schedule = greedy(5, 5, False, True)
-print(evaluate_result(schedule))
-print(isValid(schedule))
+    # Schedule teacher by teacher
+    for teacher in teachers:
+        for lesson in lessons:
+            if (lesson.times > 0 and teacher in lesson.teachers):
+                for i in range(lesson.times):
+                    day, hour = schedule.getFirstAvailableHour(lesson, shuffleDays, shuffleHours)
+                    if (day != None):
+                        schedule.addLesson(lesson, day, hour)
 
-# Shuffle days and hours
-schedule = greedy(5, 5, True, True)
-print(evaluate_result(schedule))
-print(isValid(schedule))
+    subjects = []
+    for lesson in lessons:
+        if (lesson.name not in subjects):
+            subjects.append(lesson.name)
+
+    return schedule
+
+
+def greedySubject(shuffleDays, shuffleHours):
+    lessons = readData("Algo_Project_data.txt")
+    schedule = Schedule(5, 5)
+
+    # Get all subjects
+    subjects = []
+    for lesson in lessons:
+        if (lesson.name not in subjects):
+            subjects.append(lesson.name)
+
+    # Schedule teacher by teacher
+    for subject in subjects:
+        for lesson in lessons:
+            if (lesson.times > 0 and subject == lesson.name):
+                for i in range(lesson.times):
+                    day, hour = schedule.getFirstAvailableHour(lesson, shuffleDays, shuffleHours)
+                    if (day != None):
+                        schedule.addLesson(lesson, day, hour)
+
+    return schedule
+
+def printInfo(schedule):
+    print(evaluate_result(schedule))
+    print(isValid(schedule))
+
+def runTests():
+
+    # No shuffle
+    printInfo(greedy(False, False))
+    printInfo(greedyTeacher(False, False))
+    printInfo(greedySubject(False, False))
+
+    # Shuffle days
+    printInfo(greedy(True, False))
+    printInfo(greedyTeacher(True, False))
+    printInfo(greedySubject(True, False))
+
+    # Shuffle hours
+    printInfo(greedy(False, True))
+    printInfo(greedyTeacher(False, True))
+    printInfo(greedySubject(False, True))
+
+    # Shuffle days and hours
+    printInfo(greedy(True, True))
+    printInfo(greedyTeacher(True, True))
+    printInfo(greedySubject(True, True))
+
+runTests()
