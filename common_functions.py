@@ -121,8 +121,8 @@ def simulated_anneal(greedy_output,max_lesson, start_T=1.0, alfa=0.9):
         while i <= 100:
             ####choose whichever is currently needed
             #new_solution = permute_whole_slot(greedy_output)
-            #new_solution = permutewithinteacher(greedy_output)
-            new_solution = permutewithinteacher_nomissingclass(greedy_output)
+            new_solution = permutewithinteacher(greedy_output)
+            #new_solution = permutewithinteacher_nomissingclass(greedy_output)
             new_cost = evaluate_result(new_solution,max_lesson)
             #print(new_cost)
             #print(old_cost)
@@ -294,6 +294,8 @@ def acceptprob(old_cost, new_cost, T):
 
 
 def greedy(lessondata,max_days,max_hours):
+    cnt = 0
+    innerc = 0
     lessonplan = {}
     random_lesson_keys = list(lessondata.keys())
     shuffle(random_lesson_keys)
@@ -303,11 +305,13 @@ def greedy(lessondata,max_days,max_hours):
         for j in range(max_hours):
             lessonplan['day' + str(i+1)][j+1] = []
             for k in random_lesson_keys:
+                cnt += 1
                 if int(lessondata[k][3]) > 0:
                     toadd = [lessondata[k][0],lessondata[k][1],lessondata[k][2]]
                     addable = True
                     if not [lessondata[k][0],lessondata[k][1]] in max_lessons:
                         for l in lessonplan['day' + str(i+1)][j+1]:
+                            innerc += 1
                             #print(l)
                             for a in lessondata[k][0].split(','):
                                 #print(a)
@@ -365,13 +369,15 @@ minimum = 100000
 
 def output_data(output_file, outer_reps, start_reps, inner_reps, annealing_start_T, annealing_factor, optimal_lessons, max_hours):
     dta = []
+    print("start")
     for m in range(outer_reps):
+        print("Starting-loop")
         minim = 100000
         cur_best, cur_fail = greedy(readlessondata("Algo_Project_data_changed.txt"), 5, max_hours)
         for i in range(start_reps):
             cur, cur_fail = greedy(readlessondata("Algo_Project_data_changed.txt"), 5, max_hours)
             tmp_min = evaluate_result(cur, optimal_lessons)
-            if tmp_min < minimum and len(cur_fail) == 0:
+            if tmp_min < minim and len(cur_fail) == 0:
                 minim = tmp_min
                 cur_best, cur_fail = cur, cur_fail
         start_min = minim
@@ -381,7 +387,7 @@ def output_data(output_file, outer_reps, start_reps, inner_reps, annealing_start
             if tmp_new_val < minim:
                 cur_best, tmp_fail = tmp_ref, cur_fail
                 minim = tmp_new_val
-        print(m)
+        print(str(m) + str(minim))
         dta.append([start_min, minim])
 
     with open(output_file, "a") as f:
@@ -390,8 +396,8 @@ def output_data(output_file, outer_reps, start_reps, inner_reps, annealing_start
                 % (start_reps, annealing_start_T, annealing_factor))
         f.write("Results: %s\n" % str(dta))
 
-"""
-for i in range(3):
+
+for i in range(1000):
     a, ta = greedy(readlessondata("Algo_Project_data_changed.txt"), 5, 5)
     bilbo.append(a)
     #print(evaluate_result(a,5))
@@ -400,17 +406,36 @@ for i in range(3):
         minimum = tmp_min
         minimal = a
         print(minimum)
-"""
+
 #print(minimal)
 #print(minimum)
 #print(minimal)
-#print(minimum)
+print(minimum)
 #print(evaluate_result(reference,5))
 #print(simulated_anneal(reference,5)[1])
 #print(evaluate_result(minimal,5))
 #print(simulated_anneal(minimal, 5)[1])
 #print(minimum)
 
-output_data(output_file="data.txt", outer_reps=2, start_reps=200, inner_reps=4, annealing_start_T=1.0,
-            annealing_factor=0.85, optimal_lessons=5, max_hours=5)
+#output_data(output_file="data.txt", outer_reps=2, start_reps=200, inner_reps=4, annealing_start_T=1.0,
+#            annealing_factor=0.85, optimal_lessons=5, max_hours=5)
+"""
+output_data(output_file="data.txt", outer_reps=3, start_reps=200, inner_reps=4, annealing_start_T=10.0,
+            annealing_factor=0.9, optimal_lessons=5, max_hours=5)
 
+output_data(output_file="data.txt", outer_reps=3, start_reps=200, inner_reps=4, annealing_start_T=7.0,
+            annealing_factor=0.9, optimal_lessons=5, max_hours=5)
+
+output_data(output_file="data.txt", outer_reps=3, start_reps=200, inner_reps=4, annealing_start_T=5.0,
+            annealing_factor=0.9, optimal_lessons=5, max_hours=5)
+
+output_data(output_file="data.txt", outer_reps=3, start_reps=200, inner_reps=4, annealing_start_T=3.0,
+            annealing_factor=0.9, optimal_lessons=5, max_hours=5)
+
+output_data(output_file="data.txt", outer_reps=3, start_reps=200, inner_reps=4, annealing_start_T=1.0,
+            annealing_factor=0.9, optimal_lessons=5, max_hours=5)
+
+output_data(output_file="data.txt", outer_reps=3, start_reps=200, inner_reps=4, annealing_start_T=0.8,
+            annealing_factor=0.9, optimal_lessons=5, max_hours=5)
+
+"""
