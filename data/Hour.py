@@ -1,21 +1,18 @@
-from time import sleep
-
-
 class Hour(object):
 
     def __init__(self):
         self.lessons = []
+        self.busyTeachers = []
 
     def canAddLesson(self, checkLesson):
-        busyTeachers = []
         for lesson in self.lessons:
             if (lesson.className == checkLesson.className):
                 return False
-            busyTeachers.append(lesson.teacher)
 
         for teacher in checkLesson.teachers:
-            if (teacher not in busyTeachers):
+            if (not teacher in self.busyTeachers):
                 checkLesson.setTeacher(teacher)
+                self.busyTeachers.append(teacher)
                 return True
 
         return False

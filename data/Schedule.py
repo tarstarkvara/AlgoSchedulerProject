@@ -12,17 +12,17 @@ class Schedule(object):
             self.days.append(Day(lessonsCount))
 
     def addLesson(self, lesson, day, hour):
-        self.days[day].addLesson(lesson, hour)
         lesson.decrement()
+        self.days[day].addLesson(lesson, hour)
 
-    def getFirstAvailableHour(self, lesson, shuffleDays, shuffleHours):
-        newHours = [i for i in range(len(self.days))]
+    def getAvailableHour(self, lesson, shuffleDays, shuffleHours):
+        newDays = [i for i in range(len(self.days))]
         if (shuffleDays):
-            shuffle(newHours)
+            shuffle(newDays)
 
-        for dayNumber in newHours:
+        for dayNumber in newDays:
             day = self.days[dayNumber]
-            hour = day.getFirstAvailableHour(lesson, shuffleHours)
+            hour = day.getAvailableHour(lesson, shuffleHours)
             if (hour != None):
                 return dayNumber, hour
 

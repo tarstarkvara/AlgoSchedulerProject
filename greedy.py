@@ -11,8 +11,9 @@ def readData(filename):
     x = f.readline()
     while len(x) > 0:
         data = x.strip().split('\t')
-        lesson = Lesson(data)
-        lessons.append(lesson)
+        for i in range(int(data[3])):
+            lesson = Lesson(data)
+            lessons.append(lesson)
         x = f.readline()
     f.close()
     return lessons
@@ -68,25 +69,12 @@ def greedy(shuffleDays, shuffleHours):
     schedule = Schedule(5, 5)
 
     for lesson in lessons:
-        for i in range(lesson.times):
-            day, hour = schedule.getFirstAvailableHour(lesson, shuffleDays, shuffleHours)
-            if (day != None):
-                schedule.addLesson(lesson, day, hour)
+        day, hour = schedule.getAvailableHour(lesson, shuffleDays, shuffleHours)
+        if (day != None):
+            schedule.addLesson(lesson, day, hour)
 
     return schedule
 
-
-def isValid(schedule):
-    faults = 0
-    for day in schedule.days:
-        for hour in day.hours:
-            busyTeachers = []
-            for lesson in hour.lessons:
-                if (lesson.teacher in busyTeachers):
-                    faults += 1
-                busyTeachers.append(lesson.teacher)
-    print("Faults: " + str(faults))
-    return faults == 0
 
 def greedyTeacher(shuffleDays, shuffleHours):
     lessons = readData("Algo_Project_data.txt")
@@ -103,10 +91,9 @@ def greedyTeacher(shuffleDays, shuffleHours):
     for teacher in teachers:
         for lesson in lessons:
             if (lesson.times > 0 and teacher in lesson.teachers):
-                for i in range(lesson.times):
-                    day, hour = schedule.getFirstAvailableHour(lesson, shuffleDays, shuffleHours)
-                    if (day != None):
-                        schedule.addLesson(lesson, day, hour)
+                day, hour = schedule.getAvailableHour(lesson, shuffleDays, shuffleHours)
+                if (day != None):
+                    schedule.addLesson(lesson, day, hour)
 
     subjects = []
     for lesson in lessons:
@@ -126,41 +113,57 @@ def greedySubject(shuffleDays, shuffleHours):
         if (lesson.name not in subjects):
             subjects.append(lesson.name)
 
-    # Schedule teacher by teacher
+    # Schedule subject by subject
     for subject in subjects:
         for lesson in lessons:
             if (lesson.times > 0 and subject == lesson.name):
-                for i in range(lesson.times):
-                    day, hour = schedule.getFirstAvailableHour(lesson, shuffleDays, shuffleHours)
-                    if (day != None):
-                        schedule.addLesson(lesson, day, hour)
+                day, hour = schedule.getAvailableHour(lesson, shuffleDays, shuffleHours)
+                if (day != None):
+                    schedule.addLesson(lesson, day, hour)
 
     return schedule
 
+
+def isValid(schedule):
+    faults = 0
+    for day in schedule.days:
+        for hour in day.hours:
+            busyTeachers = []
+            for lesson in hour.lessons:
+                if (lesson.teacher in busyTeachers):
+                    faults += 1
+                busyTeachers.append(lesson.teacher)
+    return faults == 0
+
+
 def printInfo(schedule):
-    print(evaluate_result(schedule))
-    print(isValid(schedule))
+    print("Score: " + str(evaluate_result(schedule)))
+    # print(isValid(schedule))
+
 
 def runTests():
 
-    # No shuffle
-    printInfo(greedy(False, False))
-    printInfo(greedyTeacher(False, False))
-    printInfo(greedySubject(False, False))
+    for i in range(100):
 
-    # Shuffle days
-    printInfo(greedy(True, False))
-    printInfo(greedyTeacher(True, False))
-    printInfo(greedySubject(True, False))
+        # No shuffle
+        printInfo(greedy(False, False))
+        printInfo(greedyTeacher(False, False))
+        printInfo(greedySubject(False, False))
 
-    # Shuffle hours
-    printInfo(greedy(False, True))
-    printInfo(greedyTeacher(False, True))
-    printInfo(greedySubject(False, True))
+        # Shuffle days
+        printInfo(greedy(True, False))
+        printInfo(greedyTeacher(True, False))
+        printInfo(greedySubject(True, False))
 
-    # Shuffle days and hours
-    printInfo(greedy(True, True))
-    printInfo(greedyTeacher(True, True))
-    printInfo(greedySubject(True, True))
+        # Shuffle hours
+        printInfo(greedy(False, True))
+        printInfo(greedyTeacher(False, True))
+        printInfo(greedySubject(False, True))
+
+        # Shuffle days and hours
+        printInfo(greedy(True, True))
+        printInfo(greedyTeacher(True, True))
+        printInfo(greedySubject(True, True))
+
 
 runTests()

@@ -17,7 +17,7 @@ class Day(object):
     def addLesson(self, lesson, hour):
         self.hours[hour].addLesson(lesson)
 
-    def getFirstAvailableHour(self, lesson, shuffleHours):
+    def getAvailableHour(self, lesson, shuffleHours):
         newHours = [i for i in range(len(self.hours))]
         if (shuffleHours):
             shuffle(newHours)

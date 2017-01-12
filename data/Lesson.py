@@ -8,7 +8,7 @@ class Lesson(object):
         for teacher in data[2].replace("(", "").replace(")", "").lower().split(","):
             self.teachers.append(teacher)
 
-        self.times = int (data[3])
+        self.times = 1
         self.groups = data[4]
 
     def isAvailable(self):
